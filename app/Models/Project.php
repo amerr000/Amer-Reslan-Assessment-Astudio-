@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\TimeSheet;
+use App\Models\AttributeValue;
+
 
 class Project extends Model
 {
@@ -24,5 +28,9 @@ protected $fillable = [
         return $this->hasMany(TimeSheet::class);
     }
 
+    public function attributeValues()
+    {
+        return $this->hasMany(AttributeValue::class);
+    }
 
 }
