@@ -7,6 +7,11 @@ This project is a Laravel-based application that includes core models and relati
 
 
 ## The repository on github contains also a postman API collection
+### 🔹 Import the Collection
+1. Download the [Amer Reslan Assessment.postman_collection.json](Amer%20Reslan%20Assessment.postman_collection.json).
+2. Open **Postman** and go to **File > Import**.
+3. Select the downloaded file.
+4. You will now see all API requests categorized in Postman.
 
 ## Features
 
