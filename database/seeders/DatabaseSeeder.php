@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             AttributeSeeder::class,
             AttributeValueSeeder::class,
             TimesheetSeeder::class,
-            PassportClientsSeeder::class,
         ]);
 
     }
