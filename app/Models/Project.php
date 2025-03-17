@@ -33,4 +33,16 @@ protected $fillable = [
         return $this->hasMany(AttributeValue::class);
     }
 
+    public function attributes()
+{
+    return $this->hasManyThrough(
+        Attribute::class,
+        AttributeValue::class,
+        'project_id',
+        'id',
+        'id',
+        'attribute_id'
+    );
+}
+
 }

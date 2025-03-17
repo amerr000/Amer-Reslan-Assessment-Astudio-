@@ -6,6 +6,10 @@ use App\Http\Controllers\AuthController;
 use Laravel\Passport\Passport;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\TimesheetController;
+use App\Http\Controllers\AttributeValueController;
+
 
 
 // Register Passport routes
@@ -40,5 +44,9 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('attributes', AttributeController::class);
     Route::post('projects/{project}/attributes', [ProjectController::class, 'setAttributes']);
     Route::get('projects/{project}/attributes', [ProjectController::class, 'getAttributes']);
+    Route::apiResource('timesheets', TimesheetController::class);
+    Route::apiResource('attribute-values', AttributeValueController::class);
+    
+
 
 });

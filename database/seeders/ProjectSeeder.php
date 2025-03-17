@@ -14,6 +14,8 @@ class ProjectSeeder extends Seeder
     public function run(): void
     {
         Project::create(['name' => 'Project Alpha', 'status' => 'active']);
-        Project::create(['name' => 'Project Beta', 'status' => 'completed']);
+        Project::create(['name' => 'Project Beta', 'status' => 'inactive']);
+        Project::create(['name' => 'Project Gamma', 'status' => 'active']);
+
     }
 }

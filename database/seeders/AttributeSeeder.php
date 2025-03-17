@@ -16,5 +16,6 @@ class AttributeSeeder extends Seeder
         Attribute::create(['name' => 'department', 'data_type' => 'text']);
         Attribute::create(['name' => 'start_date', 'data_type' => 'date']);
         Attribute::create(['name' => 'end_date', 'data_type' => 'date']);
+      
     }
 }

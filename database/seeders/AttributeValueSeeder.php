@@ -13,22 +13,12 @@ class AttributeValueSeeder extends Seeder
      */
     public function run(): void
     {
-        AttributeValue::create([
-            'attribute_id' => 1,
-            'project_id' => 1,
-            'value' => 'IT',
-        ]);
+        AttributeValue::create(['attribute_id' => 1, 'project_id' => 1, 'value' => 'IT Department']);
+        AttributeValue::create(['attribute_id' => 2, 'project_id' => 1, 'value' => '2024-01-01']);
+        AttributeValue::create(['attribute_id' => 3, 'project_id' => 1, 'value' => '2024-12-31']);
 
-        AttributeValue::create([
-            'attribute_id' => 2,
-            'project_id' => 1,
-            'value' => '2024-03-01',
-        ]);
-
-        AttributeValue::create([
-            'attribute_id' => 3,
-            'project_id' => 1,
-            'value' => '2024-06-01',
-        ]);
+        AttributeValue::create(['attribute_id' => 1, 'project_id' => 2, 'value' => 'HR Department']);
+        AttributeValue::create(['attribute_id' => 2, 'project_id' => 2, 'value' => '2024-02-01']);
+        AttributeValue::create(['attribute_id' => 3, 'project_id' => 2, 'value' => '2024-11-30']);
     }
 }
