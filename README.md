@@ -1,66 +1,295 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Project: Core Models & Relations, EAV Implementation, API Endpoints, and Filtering
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Project Overview
+Amer Reslan Technical Assessment
 
-## About Laravel
+This project is a Laravel-based application that includes core models and relationships, an Entity-Attribute-Value (EAV) implementation for dynamic project attributes, RESTful API endpoints with authentication, and a flexible filtering system.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## The repository on github contains also a postman API collection
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+### Part 1: Core Models & Relations
+- **User**: `first_name`, `last_name`, `email`, `password`
+- **Project**: `name`, `status`
+- **Timesheet**: `task_name`, `date`, `hours`
+- Relationships:
+  - A user can be assigned to multiple projects.
+  - A project can have multiple users.
+  - A user can log timesheets for multiple projects.
+  - Each timesheet record is linked to one project and one user.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Part 2: EAV (Entity-Attribute-Value) Implementation
+- **Attribute**: `name`, `type` (text, date, number, select)
+- **AttributeValue**: `attribute_id`, `project_id`, `value`
+- Projects support dynamic fields like `department`, `start_date`, `end_date` through EAV.
+- API endpoints to:
+  - Create/Update attributes
+  - Set attribute values when creating/updating projects
+  - Fetch projects with their dynamic attributes
+  - Filter projects by dynamic attribute values
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Part 3: API Endpoints
+- **Auth**: `/api/register`, `/api/login`, `/api/logout`
+- Standard CRUD for each model:
+  - `GET /api/{model}`
+  - `GET /api/{model}/{id}`
+  - `POST /api/{model}`
+  - `PUT /api/{model}/{id}`
+  - `DELETE /api/{model}/{id}`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Part 4: Filtering
+- Support filtering on both regular and EAV attributes.
+- Example: `GET /api/projects?filters[name]=ProjectA&filters[department]=IT`
+- Support basic operators (`=`, `>`, `<`, `LIKE`).
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Setup Instructions
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+1. Clone the repository:
+   ```sh
+git clone https://github.com/amerr000/Amer-Reslan-Assessment-Astudio-.git
+cd Amer-Reslan-Assessment-Astudio-
+   ```
 
-## Contributing
+2. Install dependencies:
+   ```sh
+   composer install
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Copy the `.env.example` file to `.env` and update the environment variables:
+   ```sh
+   cp .env.example .env
+   ```
 
-## Code of Conduct
+4. Configure Environment in `.env`:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=your_database_name
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+5. Generate Application Key:
+   ```sh
+   php artisan key:generate
+   ```
 
-## Security Vulnerabilities
+6. Install Passport:
+   ```sh
+   php artisan passport:install
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+7. Run the database migrations and seeders:
+   ```sh
+   php artisan migrate --seed
+   ```
 
-## License
+8. Start the development server:
+   ```sh
+   php artisan serve
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## API Documentation
+
+### Authentication
+- **Register**: `POST /api/register`
+- **Login**: `POST /api/login`
+- **Logout**: `POST /api/logout`
+
+### Users
+- **Get all users**: `GET /api/users`
+- **Get a user**: `GET /api/users/{id}`
+- **Update a user**: `PUT /api/users/{id}`
+- **Delete a user**: `DELETE /api/users/{id}`
+
+### Projects
+- **Get all projects**: `GET /api/projects`
+- **Get a project**: `GET /api/projects/{id}`
+- **Create a project**: `POST /api/projects`
+- **Update a project**: `PUT /api/projects/{id}`
+- **Delete a project**: `DELETE /api/projects/{id}`
+- **Set project attributes**: `POST /api/projects/{project}/attributes`
+- **Get project attributes**: `GET /api/projects/{project}/attributes`
+
+### Timesheets
+- **Get all timesheets**: `GET /api/timesheets`
+- **Get a timesheet**: `GET /api/timesheets/{id}`
+- **Create a timesheet**: `POST /api/timesheets`
+- **Update a timesheet**: `PUT /api/timesheets/{id}`
+- **Delete a timesheet**: `DELETE /api/timesheets/{id}`
+
+### Attributes
+- **Get all attributes**: `GET /api/attributes`
+- **Get an attribute**: `GET /api/attributes/{id}`
+- **Create an attribute**: `POST /api/attributes`
+- **Update an attribute**: `PUT /api/attributes/{id}`
+- **Delete an attribute**: `DELETE /api/attributes/{id}`
+
+### Attribute Values
+- **Get all attribute values**: `GET /api/attribute-values`
+- **Get an attribute value**: `GET /api/attribute-values/{id}`
+- **Create an attribute value**: `POST /api/attribute-values`
+- **Update an attribute value**: `PUT /api/attribute-values/{id}`
+- **Delete an attribute value**: `DELETE /api/attribute-values/{id}`
+
+### Filtering
+Supports filtering by both standard and dynamic attributes:
+
+- To get all projects with `status = active`:
+  ```
+  GET /api/projects?filters[status][operator]==&filters[status][value]=active
+  ```
+
+- To get projects where `start_date > 2024-01-01`:
+  ```
+  GET /api/projects?filters[start_date][operator]=>&filters[start_date][value]=2024-01-01
+  ```
+
+- Search projects where `name` contains "Alpha":
+  ```
+  GET /api/projects?filters[name][operator]=LIKE&filters[name][value]=Alpha
+  ```
+
+- Get projects where `department` is "IT" (EAV filtering):
+  ```
+  GET /api/projects?filters[department][operator]==&filters[department][value]=IT
+  ```
+
+## Example Requests/Responses
+
+### Register
+
+#### Request :
+```json
+POST /api/register
+{
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com",
+    "password": "password",
+    "password_confirmation": "password"
+}
+```
+
+#### Response :
+```json
+{
+    "message": "Registration successfully completed",
+    "token": "access_token"
+}
+```
+
+### Login
+
+#### Request :
+```json
+POST /api/login
+{
+    "email": "john.doe@example.com",
+    "password": "password"
+}
+```
+
+#### Response :
+```json
+{
+    "user": {
+        "id": 1,
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com"
+    },
+    "token": "access_token"
+}
+
+```
+
+
+### search with filter status=active
+
+#### Response
+```json
+[
+    {
+        "id": 1,
+        "name": "Project Alpha",
+        "status": "active",
+        "created_at": "2025-03-17T19:30:24.000000Z",
+        "updated_at": "2025-03-17T19:30:24.000000Z",
+        "attribute_values": [
+            {
+                "id": 1,
+                "value": "IT Department",
+                "attribute_id": 1,
+                "project_id": 1,
+                "created_at": "2025-03-17T19:30:24.000000Z",
+                "updated_at": "2025-03-17T19:30:24.000000Z",
+                "attribute": {
+                    "id": 1,
+                    "name": "department",
+                    "data_type": "text",
+                    "created_at": "2025-03-17T19:30:24.000000Z",
+                    "updated_at": "2025-03-17T19:30:24.000000Z"
+                }
+            },
+            {
+                "id": 2,
+                "value": "2024-01-01",
+                "attribute_id": 2,
+                "project_id": 1,
+                "created_at": "2025-03-17T19:30:24.000000Z",
+                "updated_at": "2025-03-17T19:30:24.000000Z",
+                "attribute": {
+                    "id": 2,
+                    "name": "start_date",
+                    "data_type": "date",
+                    "created_at": "2025-03-17T19:30:24.000000Z",
+                    "updated_at": "2025-03-17T19:30:24.000000Z"
+                }
+            },
+            {
+                "id": 3,
+                "value": "2024-12-31",
+                "attribute_id": 3,
+                "project_id": 1,
+                "created_at": "2025-03-17T19:30:24.000000Z",
+                "updated_at": "2025-03-17T19:30:24.000000Z",
+                "attribute": {
+                    "id": 3,
+                    "name": "end_date",
+                    "data_type": "date",
+                    "created_at": "2025-03-17T19:30:24.000000Z",
+                    "updated_at": "2025-03-17T19:30:24.000000Z"
+                }
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Project Gamma",
+        "status": "active",
+        "created_at": "2025-03-17T19:30:24.000000Z",
+        "updated_at": "2025-03-17T19:30:24.000000Z",
+        "attribute_values": []
+    }
+]
+
+```
+
+
+
+### Test credentials
+
+#### Request
+```json
+{
+    "email":"amerreslan13@gmail.com",
+    "password":"123456"
+}
+
+```
