@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\AttributeValue;
+use App\Models\Attribute;
 
 
 
@@ -14,60 +15,67 @@ class ProjectController extends Controller
    
     public function index(Request $request)
     {
-        // Start query builder
         $query = Project::query();
     
-        // Get filters from request
         $filters = $request->query('filters', []);
     
-        // Apply standard filtering (name, status) with operators
-        if (!empty($filters)) {
-            foreach ($filters as $key => $filter) {
-                if (isset($filter['operator']) && isset($filter['value'])) {
-                    $operator = $filter['operator'];
-                    $value = $filter['value'];
+        $validOperators = ['=', 'LIKE', '<', '>'];
     
-                    // Ensure operator is valid
-                    if (!in_array($operator, ['=', '>', '<', 'LIKE'])) {
-                        return response()->json(['error' => 'Invalid operator'], 400);
-                    }
+        foreach ($filters as $key => $filter) {
+            if (!isset($filter['operator']) || !isset($filter['value'])) {
+                return response()->json(["error" => "Filter '$key' is missing 'operator' or 'value'"], 400);
+            }
     
-                    // Apply filter
-                    if (in_array($key, ['name', 'status'])) {
-                        $query->where($key, $operator, $operator === 'LIKE' ? "%{$value}%" : $value);
-                    }
-                }
+            $operator = strtoupper($filter['operator']);
+            $value = $filter['value'];
+    
+            if (!in_array($operator, $validOperators)) {
+                return response()->json(["error" => "Invalid operator '$operator' for attribute '$key'"], 400);
+            }
+    
+            if (in_array($operator, ['>', '<']) && !is_numeric($value)) {
+                return response()->json(["error" => "Operator '$operator' can only be used with numeric values"], 400);
+            }
+    
+            $filters[$key]['operator'] = $operator;
+        }
+    
+        foreach ($filters as $key => $filter) {
+            $operator = $filter['operator'];
+            $value = $filter['value'];
+    
+            if (in_array($key, ['name', 'status'])) {
+                $query->where($key, $operator, $operator === 'LIKE' ? "%{$value}%" : $value);
             }
         }
     
-        // Apply EAV filtering (dynamic attributes)
-        if (!empty($filters)) {
-            foreach ($filters as $key => $filter) {
-                if (!in_array($key, ['name', 'status']) && isset($filter['operator']) && isset($filter['value'])) {
-                    $operator = $filter['operator'];
-                    $value = $filter['value'];
+        // To be continued (apply eav filtering here)###############################
+        foreach ($filters as $key => $filter) {
+            if (!in_array($key, ['name', 'status'])) {
+                $operator = $filter['operator'];
+                $value = $filter['value'];
     
-                    // Ensure operator is valid
-                    if (!in_array($operator, ['=', '>', '<', 'LIKE'])) {
-                        return response()->json(['error' => 'Invalid operator'], 400);
-                    }
-    
-                    $query->whereHas('attributes', function ($q) use ($key, $operator, $value) {
-                        $q->whereHas('attributeValues', function ($q2) use ($key, $operator, $value) {
-                            $q2->whereHas('attribute', function ($q3) use ($key) {
-                                $q3->where('name', $key);
-                            })->where('value', $operator, $operator === 'LIKE' ? "%{$value}%" : $value);
-                        });
+                $query->whereHas('attributeValues', function ($q) use ($key, $operator, $value) {
+                    $q->whereHas('attribute', function ($q2) use ($key) {
+                        $q2->where('name', $key);
+                    })->where(function ($q2) use ($operator, $value) {
+                        if ($operator === 'LIKE') {
+                            $q2->where('value', 'LIKE', "%{$value}%");
+                        } else {
+                            $q2->whereRaw("LOWER(value) = LOWER(?)", [$value]);
+                        }
                     });
-                }
+                });
             }
         }
     
-        // Fetch projects with attributes
-        $projects = $query->with('attributes.attributeValues')->get();
+        $projects = $query->with(['attributeValues.attribute'])->get();
     
         return response()->json($projects);
     }
+    
+    
+    
     
 
    
@@ -92,6 +100,9 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+        // Eager load the attributeValues with attribute
+        $project->load('attributeValues.attribute');
+    
         return response()->json($project, 200);
     }
 
@@ -125,21 +136,27 @@ class ProjectController extends Controller
         ], 200);
     }
 
-
     public function setAttributes(Request $request, Project $project)
-{
-    foreach ($request->attributes as $attributeId => $value) {
-        AttributeValue::updateOrCreate(
-            ['project_id' => $attributeId, 'project_id' => $project->id],
-            ['value' => $value]
-        );
+    {
+        $validated = $request->validate([
+            'attributes' => 'required|array',
+            'attributes.*' => 'string'
+        ]);
+    
+        foreach ($validated['attributes'] as $attributeId => $value) {
+            AttributeValue::updateOrCreate(
+                ['attribute_id' => $attributeId, 'project_id' => $project->id],
+                ['value' => $value]
+            );
+        }
+    
+        return response()->json(['message' => 'Attributes updated successfully']);
     }
-
-    return response()->json(['message' => 'Attributes updated successfully']);
-}
 
 public function getAttributes(Project $project)
 {
-    return response()->json($project->attributes()->with('attribute')->get());
+    $values=Project::with('attributeValues.attribute')->find($project->id);
+
+    return response()->json($values);
 }
 }

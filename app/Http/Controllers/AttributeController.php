@@ -24,7 +24,7 @@ class AttributeController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|unique:attributes,name',
-            'data_type' => 'required|string|in:text,date,number,select',
+            'data_type' => 'required|string|in:text,date,number,select,string',
         ]);
 
         $attribute = Attribute::create($validated);
@@ -57,7 +57,7 @@ class AttributeController extends Controller
 
         $validated = $request->validate([
             'name' => "sometimes|string|unique:attributes,name,$id",
-            'data_type' => 'sometimes|string|in:text,date,number,select',
+            'data_type' => 'sometimes|string|in:text,date,number,select,string',
         ]);
 
         $attribute->update($validated);

@@ -18,14 +18,14 @@ class UserSeeder extends Seeder
             'first_name' => 'Amer',
             'last_name' => 'Reslan',
             'email' => 'amerreslan13@gmail.com',
-            'password' => Hash::make('1234'),
+            'password' => Hash::make('123456'),
         ]);
 
         User::create([
             'first_name' => 'jawdat',
             'last_name' => 'reslan',
             'email' => 'jawatreslan@gmail.com',
-            'password' => Hash::make('5678'),
+            'password' => Hash::make('5678910'),
         ]);
     }
 }
