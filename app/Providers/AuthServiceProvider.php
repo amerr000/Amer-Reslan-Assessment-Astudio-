@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Laravel\Passport\Passport;
 use App\Models\User;
 use App\Policies\UserPolicy;
+use App\Models\Timesheet;
 
 
 
@@ -31,5 +32,10 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Passport::loadKeysFrom(storage_path());
+
+
+        Gate::define('update-timesheet', function ($user, Timesheet $timesheet) {
+            return $user->id === $timesheet->user_id;
+        });
     }
 }

@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Timesheet;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Project;
+use App\Models\User;
+use App\Policies\TimesheetPolicy;
+use Illuminate\Support\Facades\Gate;
 
 
 class TimesheetController extends Controller
@@ -35,15 +39,15 @@ class TimesheetController extends Controller
      // Show a specific timesheet
      public function show(Timesheet $timesheet)
      {
-         $this->authorize('view', $timesheet);
          return response()->json($timesheet);
      }
  
      // Update a timesheet record
      public function update(Request $request, Timesheet $timesheet)
      {
-         $this->authorize('update', $timesheet);
-     
+        if (Gate::denies('update-timesheet', $timesheet)) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }     
          $validated = $request->validate([
              'task_name' => 'sometimes|string|max:255',
              'date' => 'sometimes|date',
